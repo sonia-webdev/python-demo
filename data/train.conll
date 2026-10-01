@@ -1,0 +1,264 @@
+John B-PER
+works O
+at O
+Google B-ORG
+in O
+London B-LOC
+. O
+
+Mary B-PER
+joined O
+Acme B-ORG
+Corporation I-ORG
+in O
+2021 B-DATE
+. O
+
+The O
+meeting O
+was O
+held O
+in O
+Paris B-LOC
+on O
+Monday B-DATE
+. O
+
+Sarah B-PER
+works O
+for O
+Microsoft B-ORG
+in O
+Seattle B-LOC
+. O
+
+David B-PER
+visited O
+New B-LOC
+York I-LOC
+in O
+June B-DATE
+. O
+
+Amazon B-ORG
+opened O
+an O
+office O
+in O
+Dublin B-LOC
+in O
+2020 B-DATE
+. O
+
+Emma B-PER
+met O
+James B-PER
+at O
+Stanford B-ORG
+University I-ORG
+. O
+
+The O
+conference O
+starts O
+in O
+Berlin B-LOC
+on O
+Friday B-DATE
+. O
+
+Tesla B-ORG
+hired O
+Olivia B-PER
+in O
+January B-DATE
+. O
+
+Michael B-PER
+moved O
+to O
+Toronto B-LOC
+last O
+year O
+. O
+
+IBM B-ORG
+announced O
+a O
+new O
+project O
+in O
+2022 B-DATE
+. O
+
+Sophia B-PER
+visited O
+the O
+United B-LOC
+States I-LOC
+in O
+April B-DATE
+. O
+
+The O
+team O
+from O
+Meta B-ORG
+met O
+in O
+Rome B-LOC
+. O
+
+Daniel B-PER
+started O
+work O
+at O
+OpenAI B-ORG
+in O
+March B-DATE
+. O
+
+They O
+travelled O
+to O
+Tokyo B-LOC
+in O
+2023 B-DATE
+. O
+
+Netflix B-ORG
+invited O
+Grace B-PER
+to O
+Los B-LOC
+Angeles I-LOC
+. O
+
+William B-PER
+spoke O
+at O
+the O
+University B-ORG
+of I-ORG
+Oxford I-ORG
+. O
+
+The O
+launch O
+is O
+scheduled O
+for O
+December B-DATE
+2024 I-DATE
+. O
+
+Isabella B-PER
+works O
+in O
+Madrid B-LOC
+for O
+Airbus B-ORG
+. O
+
+The O
+company O
+headquarters O
+are O
+in O
+San B-LOC
+Francisco I-LOC
+. O
+
+Lucas B-PER
+joined O
+the O
+World B-ORG
+Health I-ORG
+Organization I-ORG
+in O
+2022 B-DATE
+. O
+
+They O
+met O
+in O
+Sydney B-LOC
+on O
+Tuesday B-DATE
+. O
+
+Nvidia B-ORG
+is O
+based O
+in O
+Santa B-LOC
+Clara I-LOC
+. O
+
+Amelia B-PER
+arrived O
+in O
+Beijing B-LOC
+in O
+August B-DATE
+. O
+
+The O
+report O
+was O
+published O
+by O
+Reuters B-ORG
+in O
+2024 B-DATE
+. O
+
+Ethan B-PER
+works O
+at O
+the O
+European B-ORG
+Commission I-ORG
+in O
+Brussels B-LOC
+. O
+
+They O
+visited O
+Chicago B-LOC
+with O
+Noah B-PER
+last O
+week O
+. O
+
+Adobe B-ORG
+opened O
+its O
+new O
+office O
+in O
+Amsterdam B-LOC
+in O
+2023 B-DATE
+. O
+
+Mia B-PER
+spoke O
+with O
+the O
+mayor O
+of O
+Boston B-LOC
+. O
+
+The O
+event O
+took O
+place O
+in O
+October B-DATE
+2022 I-DATE
+in O
+Lisbon B-LOC
+. O

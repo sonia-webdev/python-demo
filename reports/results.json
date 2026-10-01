@@ -1,0 +1,680 @@
+{
+  "dataset": {
+    "train_sentences": 30,
+    "test_sentences": 12,
+    "entity_types": [
+      "PER",
+      "ORG",
+      "LOC",
+      "DATE"
+    ],
+    "embedding_vocabulary_size": 134
+  },
+  "evaluation": "Exact entity-span precision, recall, and F1; micro average and per entity type.",
+  "baseline": {
+    "DATE": {
+      "precision": 0.6666666666666666,
+      "recall": 0.8571428571428571,
+      "f1": 0.75,
+      "support": 7
+    },
+    "LOC": {
+      "precision": 0.875,
+      "recall": 0.875,
+      "f1": 0.875,
+      "support": 8
+    },
+    "ORG": {
+      "precision": 0.5,
+      "recall": 0.6666666666666666,
+      "f1": 0.5714285714285715,
+      "support": 6
+    },
+    "PER": {
+      "precision": 1.0,
+      "recall": 0.8571428571428571,
+      "f1": 0.923076923076923,
+      "support": 7
+    },
+    "micro_avg": {
+      "precision": 0.7419354838709677,
+      "recall": 0.8214285714285714,
+      "f1": 0.7796610169491526,
+      "support": 28
+    }
+  },
+  "word_embeddings": {
+    "DATE": {
+      "precision": 0.6666666666666666,
+      "recall": 0.2857142857142857,
+      "f1": 0.4,
+      "support": 7
+    },
+    "LOC": {
+      "precision": 0.2857142857142857,
+      "recall": 0.5,
+      "f1": 0.36363636363636365,
+      "support": 8
+    },
+    "ORG": {
+      "precision": 0.3333333333333333,
+      "recall": 0.5,
+      "f1": 0.4,
+      "support": 6
+    },
+    "PER": {
+      "precision": 0.45454545454545453,
+      "recall": 0.7142857142857143,
+      "f1": 0.5555555555555556,
+      "support": 7
+    },
+    "micro_avg": {
+      "precision": 0.3783783783783784,
+      "recall": 0.5,
+      "f1": 0.4307692307692308,
+      "support": 28
+    }
+  },
+  "examples": [
+    {
+      "tokens": [
+        {
+          "token": "Liam",
+          "gold": "B-PER",
+          "baseline": "B-PER",
+          "embedding_model": "B-PER"
+        },
+        {
+          "token": "works",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "at",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Google",
+          "gold": "B-ORG",
+          "baseline": "B-ORG",
+          "embedding_model": "B-ORG"
+        },
+        {
+          "token": "in",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Paris",
+          "gold": "B-LOC",
+          "baseline": "B-LOC",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    },
+    {
+      "tokens": [
+        {
+          "token": "Chloe",
+          "gold": "B-PER",
+          "baseline": "B-PER",
+          "embedding_model": "B-PER"
+        },
+        {
+          "token": "visited",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "the",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "United",
+          "gold": "B-LOC",
+          "baseline": "B-LOC",
+          "embedding_model": "B-PER"
+        },
+        {
+          "token": "Kingdom",
+          "gold": "I-LOC",
+          "baseline": "I-LOC",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": "in",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "May",
+          "gold": "B-DATE",
+          "baseline": "B-DATE",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    },
+    {
+      "tokens": [
+        {
+          "token": "The",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "B-ORG"
+        },
+        {
+          "token": "company",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Apple",
+          "gold": "B-ORG",
+          "baseline": "B-ORG",
+          "embedding_model": "B-ORG"
+        },
+        {
+          "token": "hired",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Benjamin",
+          "gold": "B-PER",
+          "baseline": "B-ORG",
+          "embedding_model": "B-ORG"
+        },
+        {
+          "token": "in",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "2024",
+          "gold": "B-DATE",
+          "baseline": "B-DATE",
+          "embedding_model": "B-DATE"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    },
+    {
+      "tokens": [
+        {
+          "token": "They",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "B-PER"
+        },
+        {
+          "token": "travelled",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "to",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Melbourne",
+          "gold": "B-LOC",
+          "baseline": "B-LOC",
+          "embedding_model": "B-PER"
+        },
+        {
+          "token": "on",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Wednesday",
+          "gold": "B-DATE",
+          "baseline": "B-DATE",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    },
+    {
+      "tokens": [
+        {
+          "token": "Zoe",
+          "gold": "B-PER",
+          "baseline": "B-PER",
+          "embedding_model": "B-PER"
+        },
+        {
+          "token": "joined",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Goldman",
+          "gold": "B-ORG",
+          "baseline": "B-ORG",
+          "embedding_model": "B-PER"
+        },
+        {
+          "token": "Sachs",
+          "gold": "I-ORG",
+          "baseline": "B-ORG",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": "in",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "New",
+          "gold": "B-LOC",
+          "baseline": "B-LOC",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": "York",
+          "gold": "I-LOC",
+          "baseline": "I-LOC",
+          "embedding_model": "I-LOC"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    },
+    {
+      "tokens": [
+        {
+          "token": "The",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "B-ORG"
+        },
+        {
+          "token": "interview",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "was",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "published",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "by",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "BBC",
+          "gold": "B-ORG",
+          "baseline": "B-ORG",
+          "embedding_model": "O"
+        },
+        {
+          "token": "in",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "February",
+          "gold": "B-DATE",
+          "baseline": "B-DATE",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    },
+    {
+      "tokens": [
+        {
+          "token": "Henry",
+          "gold": "B-PER",
+          "baseline": "B-PER",
+          "embedding_model": "B-PER"
+        },
+        {
+          "token": "moved",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "to",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Cape",
+          "gold": "B-LOC",
+          "baseline": "B-LOC",
+          "embedding_model": "B-PER"
+        },
+        {
+          "token": "Town",
+          "gold": "I-LOC",
+          "baseline": "B-ORG",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": "in",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "2021",
+          "gold": "B-DATE",
+          "baseline": "B-DATE",
+          "embedding_model": "B-DATE"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    },
+    {
+      "tokens": [
+        {
+          "token": "They",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "B-PER"
+        },
+        {
+          "token": "met",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "in",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Zurich",
+          "gold": "B-LOC",
+          "baseline": "B-LOC",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": "last",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "summer",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    },
+    {
+      "tokens": [
+        {
+          "token": "The",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "B-ORG"
+        },
+        {
+          "token": "project",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "was",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "funded",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "by",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "UNICEF",
+          "gold": "B-ORG",
+          "baseline": "B-DATE",
+          "embedding_model": "O"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    },
+    {
+      "tokens": [
+        {
+          "token": "Ella",
+          "gold": "B-PER",
+          "baseline": "B-PER",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": "arrived",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "in",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Vienna",
+          "gold": "B-LOC",
+          "baseline": "B-LOC",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": "on",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Saturday",
+          "gold": "B-DATE",
+          "baseline": "B-DATE",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    },
+    {
+      "tokens": [
+        {
+          "token": "The",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "B-ORG"
+        },
+        {
+          "token": "company",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "headquarters",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "are",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "in",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Washington",
+          "gold": "B-LOC",
+          "baseline": "B-LOC",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": "D.C.",
+          "gold": "I-LOC",
+          "baseline": "I-LOC",
+          "embedding_model": "B-ORG"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    },
+    {
+      "tokens": [
+        {
+          "token": "Jack",
+          "gold": "B-PER",
+          "baseline": "B-PER",
+          "embedding_model": "B-PER"
+        },
+        {
+          "token": "started",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "at",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "Spotify",
+          "gold": "B-ORG",
+          "baseline": "B-ORG",
+          "embedding_model": "B-ORG"
+        },
+        {
+          "token": "in",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        },
+        {
+          "token": "July",
+          "gold": "B-DATE",
+          "baseline": "B-DATE",
+          "embedding_model": "B-LOC"
+        },
+        {
+          "token": "2023",
+          "gold": "I-DATE",
+          "baseline": "B-DATE",
+          "embedding_model": "B-DATE"
+        },
+        {
+          "token": ".",
+          "gold": "O",
+          "baseline": "O",
+          "embedding_model": "O"
+        }
+      ]
+    }
+  ]
+}
