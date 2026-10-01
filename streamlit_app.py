@@ -17,14 +17,6 @@ EXAMPLES = [
     ("Long organization name", "Lucas joined the World Health Organization in 2022."),
     ("Write your own", "Emma joined Google in London in 2024."),
 ]
-ENTITY_COLORS = {
-    "PER": "#f8e8ee",
-    "ORG": "#e7effb",
-    "LOC": "#e4f4f1",
-    "DATE": "#fcf1d9",
-}
-
-
 st.set_page_config(page_title="EntityLens · NER", page_icon="🔎", layout="wide")
 st.title("🔎 EntityLens")
 st.subheader("Named Entity Recognition with Word Embeddings")
@@ -48,6 +40,9 @@ def load_report() -> dict:
 with st.spinner("Loading the NER models…"):
     models = cached_models()
 
+if "analysis_text" not in st.session_state:
+    st.session_state.analysis_text = ""
+
 
 def entity_frame(predictions: list[dict[str, str]]) -> pd.DataFrame:
     return pd.DataFrame(
@@ -62,7 +57,7 @@ def entity_frame(predictions: list[dict[str, str]]) -> pd.DataFrame:
 
 def show_predictions(text: str) -> None:
     result = predict_text(text, models)
-    left, right = st.columns(2)
+    left, middle, right = st.columns(3)
     with left:
         st.markdown("#### Sparse baseline")
         entities = entity_frame(result["baseline"])
@@ -70,9 +65,19 @@ def show_predictions(text: str) -> None:
             st.info("No entities found.")
         else:
             st.dataframe(entities, hide_index=True, use_container_width=True)
-    with right:
+    with middle:
         st.markdown("#### Word embeddings")
+        st.caption("Original embedding-model prediction")
         entities = entity_frame(result["word_embeddings"])
+        if entities.empty:
+            st.info("No entities found.")
+        else:
+            st.dataframe(entities, hide_index=True, use_container_width=True)
+
+    with right:
+        st.markdown("#### Context-assisted")
+        st.caption("Adds date and name-context rules for unfamiliar words")
+        entities = entity_frame(result["context_assisted"])
         if entities.empty:
             st.info("No entities found.")
         else:
@@ -82,12 +87,13 @@ def show_predictions(text: str) -> None:
         st.dataframe(
             pd.DataFrame(
                 [
-                    {
-                        "Token": baseline["token"],
-                        "Baseline": baseline["tag"],
-                        "Word embeddings": embedded["tag"],
-                    }
-                    for baseline, embedded in zip(result["baseline"], result["word_embeddings"])
+                    {"Model": model_name, "Entity": entity["token"], "Type": entity["tag"][2:]}
+                    for model_name, predictions in (
+                        ("Sparse baseline", result["baseline"]),
+                        ("Word embeddings", result["word_embeddings"]),
+                        ("Context-assisted", result["context_assisted"]),
+                    )
+                    for entity in predictions
                 ]
             ),
             hide_index=True,
@@ -96,15 +102,18 @@ def show_predictions(text: str) -> None:
 
 
 sample_names = [name for name, _ in EXAMPLES]
-selected_sample = st.selectbox("Choose a sample text", sample_names)
-default_text = dict(EXAMPLES)[selected_sample]
+selected_sample = st.selectbox("Optional: choose a sample to load", ["Write your own text", *sample_names])
+if st.button("Load selected sample", disabled=selected_sample == "Write your own text"):
+    st.session_state.analysis_text = dict(EXAMPLES)[selected_sample]
 text = st.text_area(
     "Text to analyze",
-    value=default_text,
+    key="analysis_text",
     max_chars=5_000,
     height=120,
-    help="Enter a word, sentence, or short passage (up to 5,000 characters).",
+    placeholder="Type or paste any word, sentence, or short passage here…",
+    help="Free typing is enabled. Enter a word, sentence, or short passage (up to 5,000 characters).",
 )
+st.caption("You can type any text here; sample texts are optional. Use Analyze text to extract entities.")
 
 analyze_column, batch_column = st.columns(2)
 with analyze_column:
@@ -134,6 +143,10 @@ if analyze_all_clicked:
                 "Word-embedding entities": ", ".join(
                     f"{item['token']} ({item['tag'][2:]})"
                     for item in result["word_embeddings"] if item["tag"] != "O"
+                ) or "None",
+                "Context-assisted entities": ", ".join(
+                    f"{item['token']} ({item['tag'][2:]})"
+                    for item in result["context_assisted"] if item["tag"] != "O"
                 ) or "None",
             })
         st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)

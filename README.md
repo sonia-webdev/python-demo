@@ -61,6 +61,12 @@ own computer only; press `Ctrl+C` in PowerShell to stop it. Choose from eight
 sample texts in the dropdown, or select **Analyze all 8 examples** to see both
 models' extracted entities side by side for every sample.
 
+The Streamlit text box accepts your own text directly; the sample selector is
+optional. Its context-assisted output supplements the embedding model with
+date and nearby-word rules that can help with names not present in the tiny
+starter training set. Since entity type can be ambiguous without context, check
+the prediction rather than treating it as guaranteed.
+
 ## Deploy on Streamlit Community Cloud
 
 The repository includes `streamlit_app.py` as its Streamlit entrypoint. Push
