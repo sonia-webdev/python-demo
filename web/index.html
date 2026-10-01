@@ -115,7 +115,7 @@
     }
     .status { color: var(--muted); font-size: 13px; }
     .error { color: #a52c36; }
-    .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .results-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
     .model-title { display: flex; align-items: center; gap: 8px; }
     .model-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--teal); }
     .baseline-dot { background: #79889b; }
@@ -169,7 +169,7 @@
     <section class="intro">
       <div class="eyebrow">Named Entity Recognition</div>
       <h1>Find the important names in your text.</h1>
-      <p>Compare a sparse-feature baseline with a model using corpus-trained word embeddings. Enter a sentence to see both predictions side by side.</p>
+      <p>Enter any word, sentence, or short passage. Compare the baseline and embedding model with a context-assisted prediction for unfamiliar names.</p>
     </section>
 
     <section class="panel">
@@ -177,7 +177,7 @@
       <select id="example-select" aria-label="Choose a sample text">
         <option value="">Choose one of 8 sample texts…</option>
       </select>
-      <textarea id="input-text" maxlength="5000" placeholder="Try a sentence such as: Emma joined Google in London in 2024.">Emma joined Google in London in 2024.</textarea>
+      <textarea id="input-text" maxlength="5000" placeholder="Type or paste any text here, then analyze it…"></textarea>
       <div class="actions">
         <button id="analyze" type="button">Analyze text</button>
         <button id="analyze-all" class="example-link" type="button">Analyze all 8 examples</button>
@@ -200,6 +200,13 @@
         </div>
         <p class="subtle">32-dimensional PPMI/SVD vectors with neighboring context</p>
         <div id="embedding-output" class="token-output"><span class="subtle">Predictions will appear here.</span></div>
+      </article>
+      <article class="panel">
+        <div class="panel-head">
+          <div class="model-title"><span class="model-dot"></span><h2>Context-assisted</h2></div>
+        </div>
+        <p class="subtle">Adds date and context clues for unfamiliar names</p>
+        <div id="context-output" class="token-output"><span class="subtle">Predictions will appear here.</span></div>
       </article>
     </section>
 
@@ -294,6 +301,7 @@
         const result = await requestPrediction(text);
         showTokens(document.querySelector("#baseline-output"), result.baseline);
         showTokens(document.querySelector("#embedding-output"), result.word_embeddings);
+        showTokens(document.querySelector("#context-output"), result.context_assisted);
         document.querySelector("#batch-results").hidden = true;
         status.textContent = "Analysis complete.";
       } catch (error) {
@@ -324,7 +332,7 @@
       status.textContent = "Analyzing all 8 examples…";
       status.className = "status";
       resultsPanel.hidden = false;
-      resultsPanel.textContent = "Running each sample through both models…";
+      resultsPanel.textContent = "Running each sample through all three prediction approaches…";
       try {
         const predictions = await Promise.all(
           sampleTexts.map((sample) => requestPrediction(sample.text))
@@ -332,7 +340,12 @@
         const table = document.createElement("table");
         table.className = "batch-table";
         const head = table.createTHead().insertRow();
-        for (const heading of ["Example text", "Sparse baseline entities", "Word-embedding entities"]) {
+        for (const heading of [
+          "Example text",
+          "Sparse baseline entities",
+          "Word-embedding entities",
+          "Context-assisted entities"
+        ]) {
           const cell = document.createElement("th");
           cell.textContent = heading;
           head.append(cell);
@@ -341,7 +354,11 @@
         sampleTexts.forEach((sample, index) => {
           const row = body.insertRow();
           row.insertCell().textContent = sample.text;
-          for (const tokens of [predictions[index].baseline, predictions[index].word_embeddings]) {
+          for (const tokens of [
+            predictions[index].baseline,
+            predictions[index].word_embeddings,
+            predictions[index].context_assisted
+          ]) {
             const cell = row.insertCell();
             const summary = entitySummary(tokens);
             if (typeof summary === "string") {
@@ -408,7 +425,6 @@
       document.querySelector("#metrics-body").textContent = error.message;
       document.querySelector("#dataset-size").textContent = "Results unavailable";
     });
-    analyze();
   </script>
 </body>
 </html>
