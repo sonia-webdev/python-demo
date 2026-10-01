@@ -2,28 +2,11 @@ import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from .dataset import read_conll
-from .embeddings import CooccurrenceEmbeddings, tokenize
-from .features import embedding_features, sparse_features
-from .metrics import normalize_iob2, spans
-from .model import TokenClassifier
+from .pipeline import annotate_entities, load_models, predict_text
 
 
 ROOT = Path(__file__).resolve().parent.parent
 MAX_REQUEST_SIZE = 20_000
-
-
-def load_models() -> tuple:
-    train_rows = read_conll(ROOT / "data" / "train.conll")
-    train_words = [[word for word, _ in sentence] for sentence in train_rows]
-    train_labels = [tag for sentence in train_rows for _, tag in sentence]
-
-    train_sparse, vectorizer = sparse_features(train_words)
-    baseline = TokenClassifier().fit(train_sparse, train_labels)
-
-    embeddings = CooccurrenceEmbeddings(dimensions=32).fit(train_words)
-    embedded = TokenClassifier().fit(embedding_features(train_words, embeddings), train_labels)
-    return vectorizer, baseline, embeddings, embedded
 
 
 class NERHandler(BaseHTTPRequestHandler):
@@ -72,38 +55,12 @@ class NERHandler(BaseHTTPRequestHandler):
                 self._send(400, {"error": "Text must be between 1 and 5,000 characters."}, "application/json; charset=utf-8")
                 return
 
-            words = tokenize(text)
-            if not words:
-                self._send(400, {"error": "No words found in the provided text."}, "application/json; charset=utf-8")
-                return
-            sparse, _ = sparse_features([words], self.vectorizer)
-            baseline_tags = normalize_iob2(self.baseline.predict(sparse))
-            embedded_features = embedding_features([words], self.embeddings)
-            embedding_tags = normalize_iob2(self.embedded.predict(embedded_features))
-            self._send(200, {
-                "baseline": self._annotate(words, baseline_tags),
-                "word_embeddings": self._annotate(words, embedding_tags),
-            }, "application/json; charset=utf-8")
+            predictions = predict_text(text, (
+                self.vectorizer, self.baseline, self.embeddings, self.embedded,
+            ))
+            self._send(200, predictions, "application/json; charset=utf-8")
         except (json.JSONDecodeError, UnicodeDecodeError, ValueError) as error:
             self._send(400, {"error": f"Invalid prediction request: {error}"}, "application/json; charset=utf-8")
-
-    @staticmethod
-    def _annotate(words: list[str], tags: list[str]) -> list[dict[str, str]]:
-        entity_starts = {
-            start: (entity_type, end)
-            for entity_type, start, end in spans(tags)
-        }
-        result: list[dict[str, str]] = []
-        index = 0
-        while index < len(words):
-            if index in entity_starts:
-                entity_type, end = entity_starts[index]
-                result.append({"token": " ".join(words[index:end]), "tag": f"B-{entity_type}"})
-                index = end
-            else:
-                result.append({"token": words[index], "tag": "O"})
-                index += 1
-        return result
 
     def log_message(self, format: str, *args) -> None:
         print(f"[web] {self.address_string()} - {format % args}")

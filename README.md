@@ -61,6 +61,15 @@ own computer only; press `Ctrl+C` in PowerShell to stop it. Choose from eight
 sample texts in the dropdown, or select **Analyze all 8 examples** to see both
 models' extracted entities side by side for every sample.
 
+## Deploy on Streamlit Community Cloud
+
+The repository includes `streamlit_app.py` as its Streamlit entrypoint. Push
+the project branch to GitHub, then sign in at
+[share.streamlit.io](https://share.streamlit.io/), choose **Create app**,
+select this repository and the `ner-entity-extraction` branch, and set
+`streamlit_app.py` as the main file. Streamlit Cloud installs packages from
+`requirements.txt` automatically. The app needs no API keys or secrets.
+
 Each non-empty CoNLL row contains a token, a space, and a BIO tag (`O`,
 `B-PER`, `I-PER`, etc.); blank lines separate sentences. The test set must be
 separate from the training set.
@@ -110,6 +119,7 @@ split method.
 - `ner_embeddings/features.py` — sparse baseline and embedding feature builders
 - `ner_embeddings/metrics.py` — BIO decoding and exact entity-span metrics
 - `ner_embeddings/cli.py` — training, evaluation, and report generation
+- `streamlit_app.py` — Streamlit interactive application and sample analysis
 - `tests/test_ner.py` — focused tests for data loading, embeddings, and metrics
 
 Run tests with:
