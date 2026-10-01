@@ -45,6 +45,22 @@ another CoNLL-formatted split:
 py -m ner_embeddings --train path\to\train.conll --test path\to\test.conll
 ```
 
+## Open the interactive demo in Chrome
+
+Install the requirements if you have not already, then start the local web app
+from the extracted project folder:
+
+```powershell
+py -m pip install -r requirements.txt
+py -m ner_embeddings.web_server
+```
+
+Open `http://127.0.0.1:8765` in Chrome. Enter text to compare both models'
+predictions, and see the held-out test metrics below. The server binds to your
+own computer only; press `Ctrl+C` in PowerShell to stop it. Choose from eight
+sample texts in the dropdown, or select **Analyze all 8 examples** to see both
+models' extracted entities side by side for every sample.
+
 Each non-empty CoNLL row contains a token, a space, and a BIO tag (`O`,
 `B-PER`, `I-PER`, etc.); blank lines separate sentences. The test set must be
 separate from the training set.

@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EntityLens | Named Entity Recognition</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182b3a;
+      --muted: #667887;
+      --line: #dce5e9;
+      --paper: #ffffff;
+      --canvas: #f3f7f6;
+      --teal: #087e75;
+      --teal-pale: #e4f4f1;
+      --gold-pale: #fcf1d9;
+      --blue-pale: #e7effb;
+      --pink-pale: #f8e8ee;
+      --purple-pale: #eee9fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font: 15px/1.55 "Segoe UI", Arial, sans-serif;
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+    .topbar, main { width: min(1020px, calc(100% - 40px)); margin: 0 auto; }
+    .topbar {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand { font-weight: 750; letter-spacing: -.03em; font-size: 19px; }
+    .brand-mark { color: var(--teal); }
+    .badge {
+      border: 1px solid #b9ded7;
+      color: #076b63;
+      background: #f0faf7;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 650;
+      padding: 5px 10px;
+    }
+    main { padding: 42px 0 60px; }
+    .intro { max-width: 660px; margin-bottom: 27px; }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--teal);
+      font-weight: 750;
+      font-size: 11px;
+    }
+    h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.12; letter-spacing: -.045em; margin: 8px 0 10px; }
+    .intro p, .subtle { color: var(--muted); margin: 0; }
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 5px 20px rgba(24, 43, 58, .035);
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+    .panel-head { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 13px; }
+    h2 { font-size: 17px; letter-spacing: -.02em; margin: 0; }
+    label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 9px; }
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccd9de;
+      border-radius: 8px;
+      background: #fcfdfd;
+      color: var(--ink);
+      font: inherit;
+    }
+    select:focus { outline: 3px solid #d9f0eb; border-color: var(--teal); }
+    textarea {
+      width: 100%;
+      min-height: 116px;
+      resize: vertical;
+      padding: 13px 14px;
+      border: 1px solid #ccd9de;
+      border-radius: 9px;
+      font: inherit;
+      color: var(--ink);
+      background: #fcfdfd;
+    }
+    textarea:focus { outline: 3px solid #d9f0eb; border-color: var(--teal); }
+    .actions { display: flex; align-items: center; gap: 14px; margin-top: 14px; flex-wrap: wrap; }
+    button {
+      border: 0;
+      background: var(--teal);
+      color: white;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover { background: #066c65; }
+    button:disabled { opacity: .65; cursor: wait; }
+    .example-link {
+      background: transparent;
+      color: var(--teal);
+      padding: 7px 2px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-weight: 600;
+    }
+    .status { color: var(--muted); font-size: 13px; }
+    .error { color: #a52c36; }
+    .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .model-title { display: flex; align-items: center; gap: 8px; }
+    .model-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--teal); }
+    .baseline-dot { background: #79889b; }
+    .token-output { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 17px; min-height: 54px; }
+    .token {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--line); border-radius: 7px;
+      padding: 5px 8px; background: #fbfcfc; font-size: 14px;
+    }
+    .tag { font-size: 10px; text-transform: uppercase; letter-spacing: .035em; color: #536573; }
+    .entity-PER { background: var(--pink-pale); border-color: #edced9; }
+    .entity-ORG { background: var(--blue-pale); border-color: #ccdaf0; }
+    .entity-LOC { background: var(--teal-pale); border-color: #c6e5de; }
+    .entity-DATE { background: var(--gold-pale); border-color: #f0dfb9; }
+    .metrics { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
+    .metrics th, .metrics td { text-align: left; border-bottom: 1px solid #edf1f2; padding: 9px 8px; }
+    .metrics th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+    .metrics td:not(:first-child), .metrics th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+    .metrics tr:last-child td { border-bottom: 0; }
+    .metrics .overall { font-weight: 750; background: #f7faf9; }
+    .footnote { color: var(--muted); font-size: 12px; margin: 14px 0 0; }
+    .section-note { color: var(--muted); font-size: 13px; margin: 5px 0 0; }
+    .batch-results { margin-top: 20px; overflow-x: auto; }
+    .batch-results[hidden] { display: none; }
+    .batch-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .batch-table th, .batch-table td { text-align: left; vertical-align: top; border-bottom: 1px solid #edf1f2; padding: 10px 8px; }
+    .batch-table th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+    .batch-table td:first-child { min-width: 220px; }
+    .batch-entity { display: inline-block; margin: 0 4px 4px 0; padding: 2px 6px; border: 1px solid var(--line); border-radius: 6px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; }
+    .legend span { padding: 3px 8px; border: 1px solid var(--line); border-radius: 999px; font-size: 11px; }
+    footer { text-align: center; color: var(--muted); font-size: 12px; padding: 4px 16px 24px; }
+    @media (max-width: 700px) {
+      .results-grid { grid-template-columns: 1fr; }
+      .panel { padding: 18px; }
+      .topbar, main { width: min(100% - 28px, 1020px); }
+      main { padding-top: 30px; }
+      .metrics { font-size: 12px; }
+      .metrics th, .metrics td { padding: 8px 5px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div class="brand"><span class="brand-mark">●</span> EntityLens</div>
+      <div class="badge">NLP · WORD EMBEDDINGS</div>
+    </div>
+  </header>
+  <main>
+    <section class="intro">
+      <div class="eyebrow">Named Entity Recognition</div>
+      <h1>Find the important names in your text.</h1>
+      <p>Compare a sparse-feature baseline with a model using corpus-trained word embeddings. Enter a sentence to see both predictions side by side.</p>
+    </section>
+
+    <section class="panel">
+      <label for="input-text">Text to analyze</label>
+      <select id="example-select" aria-label="Choose a sample text">
+        <option value="">Choose one of 8 sample texts…</option>
+      </select>
+      <textarea id="input-text" maxlength="5000" placeholder="Try a sentence such as: Emma joined Google in London in 2024.">Emma joined Google in London in 2024.</textarea>
+      <div class="actions">
+        <button id="analyze" type="button">Analyze text</button>
+        <button id="analyze-all" class="example-link" type="button">Analyze all 8 examples</button>
+        <span id="status" class="status" role="status" aria-live="polite"></span>
+      </div>
+      <div id="batch-results" class="batch-results" hidden aria-live="polite"></div>
+    </section>
+
+    <section class="results-grid" aria-label="Model predictions">
+      <article class="panel">
+        <div class="panel-head">
+          <div class="model-title"><span class="model-dot baseline-dot"></span><h2>Sparse baseline</h2></div>
+        </div>
+        <p class="subtle">Token/context, spelling, and capitalization features</p>
+        <div id="baseline-output" class="token-output"><span class="subtle">Predictions will appear here.</span></div>
+      </article>
+      <article class="panel">
+        <div class="panel-head">
+          <div class="model-title"><span class="model-dot"></span><h2>Word embeddings</h2></div>
+        </div>
+        <p class="subtle">32-dimensional PPMI/SVD vectors with neighboring context</p>
+        <div id="embedding-output" class="token-output"><span class="subtle">Predictions will appear here.</span></div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Held-out test results</h2>
+          <p class="section-note">Exact entity-span scores on the bundled test split</p>
+        </div>
+        <div class="badge" id="dataset-size">Loading results…</div>
+      </div>
+      <table class="metrics">
+        <thead><tr><th>Entity</th><th>Model</th><th>Precision</th><th>Recall</th><th>F1</th></tr></thead>
+        <tbody id="metrics-body"><tr><td colspan="5">Loading evaluation results…</td></tr></tbody>
+      </table>
+      <div class="legend" style="margin-top:16px">
+        <span class="entity-PER">PER · Person</span>
+        <span class="entity-ORG">ORG · Organization</span>
+        <span class="entity-LOC">LOC · Location</span>
+        <span class="entity-DATE">DATE · Date</span>
+      </div>
+      <p class="footnote">The bundled dataset is deliberately small and for demonstration. Its scores are not a reliable estimate of real-world performance.</p>
+    </section>
+  </main>
+  <footer>Local demo · Models run on your machine · No text is sent to an external service</footer>
+  <script>
+    const input = document.querySelector("#input-text");
+    const status = document.querySelector("#status");
+    const button = document.querySelector("#analyze");
+    const sampleTexts = [
+      { title: "People, company, and location", text: "Sophia met Daniel at Microsoft in Seattle on Friday." },
+      { title: "Company and date", text: "Amazon opened an office in Dublin in 2020." },
+      { title: "Multi-word location", text: "David visited New York in June." },
+      { title: "Organizations and place", text: "The team from Meta met in Rome." },
+      { title: "Person and organization", text: "Emma met James at Stanford University." },
+      { title: "Date and location", text: "The launch is scheduled for December 2024 in Lisbon." },
+      { title: "Long organization name", text: "Lucas joined the World Health Organization in 2022." },
+      { title: "Write your own", text: "Emma joined Google in London in 2024." }
+    ];
+
+    const exampleSelect = document.querySelector("#example-select");
+    sampleTexts.forEach((sample, index) => {
+      const option = document.createElement("option");
+      option.value = String(index);
+      option.textContent = `${index + 1}. ${sample.title}`;
+      exampleSelect.append(option);
+    });
+
+    function addTag(parent, tag) {
+      const pill = document.createElement("span");
+      const parts = tag === "O" ? null : tag.split("-");
+      pill.className = "token" + (parts ? " entity-" + parts[1] : "");
+      const text = document.createElement("span");
+      text.textContent = tag.token;
+      pill.append(text);
+      if (parts) {
+        const label = document.createElement("span");
+        label.className = "tag";
+        label.textContent = parts[1];
+        pill.append(label);
+      }
+      parent.append(pill);
+    }
+
+    function showTokens(element, tokens) {
+      element.replaceChildren();
+      for (const token of tokens) addTag(element, token.tag);
+    }
+
+    async function requestPrediction(text) {
+      const response = await fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "The request failed.");
+      return result;
+    }
+
+    async function analyze() {
+      const text = input.value.trim();
+      if (!text) {
+        status.textContent = "Enter some text first.";
+        status.className = "status error";
+        return;
+      }
+      button.disabled = true;
+      status.textContent = "Analyzing…";
+      status.className = "status";
+      try {
+        const result = await requestPrediction(text);
+        showTokens(document.querySelector("#baseline-output"), result.baseline);
+        showTokens(document.querySelector("#embedding-output"), result.word_embeddings);
+        document.querySelector("#batch-results").hidden = true;
+        status.textContent = "Analysis complete.";
+      } catch (error) {
+        status.textContent = error.message || "Could not reach the local model.";
+        status.className = "status error";
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function entitySummary(tokens) {
+      const entities = tokens.filter((token) => token.tag !== "O");
+      if (!entities.length) return "No entities found";
+      return entities.map((entity) => {
+        const label = entity.tag.slice(2);
+        const span = document.createElement("span");
+        span.className = `batch-entity entity-${label}`;
+        span.textContent = `${entity.token} · ${label}`;
+        return span;
+      });
+    }
+
+    async function analyzeAllExamples() {
+      const allButton = document.querySelector("#analyze-all");
+      const resultsPanel = document.querySelector("#batch-results");
+      allButton.disabled = true;
+      button.disabled = true;
+      status.textContent = "Analyzing all 8 examples…";
+      status.className = "status";
+      resultsPanel.hidden = false;
+      resultsPanel.textContent = "Running each sample through both models…";
+      try {
+        const predictions = await Promise.all(
+          sampleTexts.map((sample) => requestPrediction(sample.text))
+        );
+        const table = document.createElement("table");
+        table.className = "batch-table";
+        const head = table.createTHead().insertRow();
+        for (const heading of ["Example text", "Sparse baseline entities", "Word-embedding entities"]) {
+          const cell = document.createElement("th");
+          cell.textContent = heading;
+          head.append(cell);
+        }
+        const body = table.createTBody();
+        sampleTexts.forEach((sample, index) => {
+          const row = body.insertRow();
+          row.insertCell().textContent = sample.text;
+          for (const tokens of [predictions[index].baseline, predictions[index].word_embeddings]) {
+            const cell = row.insertCell();
+            const summary = entitySummary(tokens);
+            if (typeof summary === "string") {
+              cell.textContent = summary;
+            } else {
+              summary.forEach((entity) => cell.append(entity));
+            }
+          }
+        });
+        resultsPanel.replaceChildren(table);
+        status.textContent = "All 8 examples analyzed.";
+      } catch (error) {
+        resultsPanel.textContent = error.message || "Unable to analyze the example texts.";
+        status.textContent = "Could not complete the batch analysis.";
+        status.className = "status error";
+      } finally {
+        allButton.disabled = false;
+        button.disabled = false;
+      }
+    }
+
+    function score(value) { return Number(value).toFixed(3); }
+
+    function addMetricRow(body, label, model, value, overall) {
+      const row = document.createElement("tr");
+      if (overall) row.className = "overall";
+      for (const content of [label, model, score(value.precision), score(value.recall), score(value.f1)]) {
+        const cell = document.createElement("td");
+        cell.textContent = content;
+        row.append(cell);
+      }
+      body.append(row);
+    }
+
+    async function loadResults() {
+      const response = await fetch("/results.json");
+      if (!response.ok) throw new Error("Unable to load evaluation results.");
+      const report = await response.json();
+      document.querySelector("#dataset-size").textContent =
+        `${report.dataset.train_sentences} train · ${report.dataset.test_sentences} test sentences`;
+      const body = document.querySelector("#metrics-body");
+      body.replaceChildren();
+      const labels = ["PER", "ORG", "LOC", "DATE"];
+      for (const label of labels) {
+        addMetricRow(body, label, "Sparse baseline", report.baseline[label], false);
+        addMetricRow(body, label, "Word embeddings", report.word_embeddings[label], false);
+      }
+      addMetricRow(body, "Micro avg.", "Sparse baseline", report.baseline.micro_avg, true);
+      addMetricRow(body, "Micro avg.", "Word embeddings", report.word_embeddings.micro_avg, true);
+    }
+
+    button.addEventListener("click", analyze);
+    document.querySelector("#analyze-all").addEventListener("click", analyzeAllExamples);
+    exampleSelect.addEventListener("change", () => {
+      const index = Number(exampleSelect.value);
+      if (Number.isInteger(index) && sampleTexts[index]) {
+        input.value = sampleTexts[index].text;
+      }
+    });
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) analyze();
+    });
+    loadResults().catch((error) => {
+      document.querySelector("#metrics-body").textContent = error.message;
+      document.querySelector("#dataset-size").textContent = "Results unavailable";
+    });
+    analyze();
+  </script>
+</body>
+</html>

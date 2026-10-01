@@ -2,3 +2,4 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+NER_Embeddings_Final_Project.zip
